@@ -8,5 +8,5 @@ object Main extends App {
   
   printSet(negatives)
   
-  printSet(map(negatives, x => x*2))
+  printSet(map(negatives, x => x*5))
 }
