@@ -77,6 +77,7 @@ class FunSetSuite extends FunSuite {
     val s1 = singletonSet(1)
     val s2 = singletonSet(2)
     val s3 = singletonSet(3)
+    val negatives: Set = i => i < 0
   }
 
   /**
@@ -131,6 +132,34 @@ class FunSetSuite extends FunSuite {
       assert(contains(u, 1), "Intersection 1")
       assert(!contains(u, 2), "Intersection 2")
       assert(!contains(u, 3), "Intersection 3")
+    }
+  }
+  
+  test("filter selects only the elements of a set that are accepted by a given predicate") {
+    new TestSets {
+      val s = union(s1, s2)
+      val t = union(s2, s3)
+      val u = union(s, t)
+      val pred: Set = i => i % 2 != 0 //nieparzyste
+      val filtered = filter(u, pred)
+      
+      assert(contains(filtered, 1), "filtered 1")
+      assert(contains(filtered, 3), "filtered 2")
+      assert(!contains(filtered, 2), "filtered 3")
+    }
+  }
+  
+  test("#forall in oneToTen set element divided by one returns element") {
+    new TestSets {
+      val pred: Set = i => i / 1 == i
+      assert(forall(negatives, pred), "forall 1")
+    }
+  }
+  
+  test("#exists checks if a predication match for any element of the set") {
+    new TestSets {
+      val pred: Set = i => i + 15 == 14
+      assert(exists(negatives, pred), "forall 1")
     }
   }
 }
