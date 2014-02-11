@@ -34,7 +34,7 @@ class Tweet(val user: String, val text: String, val retweets: Int) {
  * [1] http://en.wikipedia.org/wiki/Binary_search_tree
  */
 abstract class TweetSet {
-
+  
   /**
    * This method takes a predicate and returns a subset of all the elements
    * in the original set for which the predicate is true.
@@ -67,7 +67,9 @@ abstract class TweetSet {
    * Question: Should we implment this method here, or should it remain abstract
    * and be implemented in the subclasses?
    */
-  def mostRetweeted: Tweet = ???
+  def mostRetweeted: Tweet
+  
+  def mostRetweetedAcc(mRTweet: Tweet): Tweet 
 
   /**
    * Returns a list containing all tweets of this set, sorted by retweet count
@@ -110,10 +112,14 @@ abstract class TweetSet {
 }
 
 class Empty extends TweetSet {
-
+  
   def filterAcc(p: Tweet => Boolean, acc: TweetSet): TweetSet = acc
   
   def union(that: TweetSet): TweetSet = that
+  
+  def mostRetweeted: Tweet = throw new java.util.NoSuchElementException
+  
+  def mostRetweetedAcc(mRTweet: Tweet): Tweet = mRTweet  
   
  /**
    * The following methods are already implemented
@@ -129,12 +135,21 @@ class Empty extends TweetSet {
 }
 
 class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
-
+  
   def filterAcc(p: Tweet => Boolean, acc: TweetSet): TweetSet = {
     if (p(elem)) right.filterAcc(p, left.filterAcc(p, acc.incl(elem))) else right.filterAcc(p, left.filterAcc(p, acc))            
   }
   
   def union(that: TweetSet): TweetSet = filterAcc(x => contains(elem), that)
+  
+  def mostRetweeted: Tweet = mostRetweetedAcc(elem)
+  
+  def mostRetweetedAcc(mRTweet: Tweet): Tweet = {
+    if (elem.retweets > mRTweet.retweets) right.mostRetweetedAcc(left.mostRetweetedAcc(elem)) 
+    else right.mostRetweetedAcc(left.mostRetweetedAcc(mRTweet))
+  }  
+     
+   
   
   /**
    * The following methods are already implemented

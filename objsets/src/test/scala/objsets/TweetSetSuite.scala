@@ -17,7 +17,7 @@ class TweetSetSuite extends FunSuite {
     val set4d = set3.incl(d)
     val set5 = set4c.incl(d)
   }
-
+  
   def asSet(tweets: TweetSet): Set[Tweet] = {
     var res = Set[Tweet]()
     tweets.foreach(res += _)
@@ -25,6 +25,31 @@ class TweetSetSuite extends FunSuite {
   }
 
   def size(set: TweetSet): Int = asSet(set).size
+  
+  test("remove removes tweet"){
+    new TestSets{
+      assert(size(set3) == 2)
+      val remSet = set3.remove(new Tweet("a","a body", 20))
+      assert(size(remSet) == 1)
+      assert(remSet.contains(new Tweet("b","b body", 20)))
+      assert(!remSet.contains(new Tweet("a","a body", 20)))
+    }
+  }
+  
+  test("most retweeted on Empty set throws an exception"){
+    new TestSets {
+      intercept[NoSuchElementException]{
+    	  set1.mostRetweeted
+      }
+    }
+  }
+  
+  test("moset retweeted returns most retweeted tweet from passed TweetSet"){
+   new TestSets {
+     assert(set5.mostRetweeted.user == "a")
+   } 
+    
+  }
 
   test("filter: on empty set") {
     new TestSets {
